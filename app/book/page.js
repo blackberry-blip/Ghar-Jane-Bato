@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 
 const routes = {
@@ -14,7 +14,7 @@ const routes = {
   'gorakhpur-bhairahawa': { from: 'गोरखपुर', to: 'भैरहवा', price: 1200 },
 }
 
-export default function BookPage() {
+function BookForm() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const routeId = searchParams.get('route')
@@ -67,7 +67,6 @@ export default function BookPage() {
       createdAt: new Date().toISOString(),
     }
 
-    // Save to localStorage
     const existing = JSON.parse(localStorage.getItem('bookings') || '[]')
     existing.push(booking)
     localStorage.setItem('bookings', JSON.stringify(existing))
@@ -277,7 +276,6 @@ export default function BookPage() {
           />
         </div>
 
-        {/* Order Summary */}
         <div style={{
           background: '#fff8e1',
           borderRadius: '12px',
@@ -330,5 +328,29 @@ export default function BookPage() {
         </p>
       </form>
     </div>
+  )
+}
+
+// Loading fallback component
+function LoadingFallback() {
+  return (
+    <div style={{ 
+      maxWidth: '480px', 
+      margin: '0 auto', 
+      padding: '60px 20px', 
+      textAlign: 'center' 
+    }}>
+      <div style={{ fontSize: '32px', marginBottom: '16px' }}>⏳</div>
+      <p style={{ color: '#666' }}>लोड हुँदैछ...</p>
+    </div>
+  )
+}
+
+// Main export with Suspense wrapper
+export default function BookPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <BookForm />
+    </Suspense>
   )
 }
