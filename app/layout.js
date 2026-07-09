@@ -10,7 +10,7 @@ export default function RootLayout({ children }) {
         fontFamily: 'system-ui, -apple-system, sans-serif', 
         margin: 0, 
         padding: 0,
-        backgroundColor: '#f5f5f5'
+        backgroundColor: '#f8f6f1'
       }}>
         {children}
       </body>
