@@ -73,6 +73,7 @@ function BusCard({ bus, onSelect }) {
 function BookingModal({ bus, from, to, onClose, onConfirm }) {
   const [form, setForm] = useState({ name: '', phone: '', seats: '1', date: '' })
   const [showPay, setShowPay] = useState(false)
+  const [saving, setSaving] = useState(false)
   const total = bus.price * parseInt(form.seats || 1)
 
   const handleProceed = () => {
@@ -80,12 +81,37 @@ function BookingModal({ bus, from, to, onClose, onConfirm }) {
     setShowPay(true)
   }
 
-  const handlePay = () => {
-    const booking = { id: 'GJB' + Date.now(), busId: bus.id, busOperator: bus.operator, busType: bus.type, from, to, price: bus.price, ...form, seats: parseInt(form.seats), totalAmount: total, status: 'pending', createdAt: new Date().toISOString() }
-    const existing = JSON.parse(localStorage.getItem('bookings') || '[]')
-    existing.push(booking)
-    localStorage.setItem('bookings', JSON.stringify(existing))
-    onConfirm(booking)
+  // CHANGED: Now saves to Upstash API instead of localStorage
+  const handlePay = async () => {
+    setSaving(true)
+    const booking = {
+      id: 'GJB' + Date.now(),
+      busId: bus.id,
+      busOperator: bus.operator,
+      busType: bus.type,
+      from,
+      to,
+      price: bus.price,
+      name: form.name,
+      phone: form.phone,
+      seats: parseInt(form.seats),
+      totalAmount: total,
+      date: form.date,
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+    }
+
+    try {
+      await fetch('/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(booking)
+      })
+      onConfirm(booking)
+    } catch (err) {
+      alert('बुकिङ सेभ हुन सकेन। पुन: प्रयास गर्नुहोस्।')
+      setSaving(false)
+    }
   }
 
   if (showPay) {
@@ -100,7 +126,24 @@ function BookingModal({ bus, from, to, onClose, onConfirm }) {
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}><span style={{ color: '#666' }}>सीट</span><span style={{ fontWeight: '600' }}>{form.seats}</span></div>
             <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #ddd', paddingTop: '10px', marginTop: '10px' }}><span style={{ fontWeight: 'bold', color: '#0D1B3E' }}>कुल रकम</span><span style={{ fontWeight: 'bold', color: '#C0182A', fontSize: '20px' }}>₹{total}</span></div>
           </div>
-          <button onClick={handlePay} style={{ width: '100%', padding: '16px', background: '#C0182A', color: '#fff', border: 'none', borderRadius: '12px', fontSize: '18px', fontWeight: 'bold', cursor: 'pointer', marginBottom: '10px' }}>₹{total} भुक्तानी गर्नुहोस्</button>
+          <button 
+            onClick={handlePay} 
+            disabled={saving}
+            style={{ 
+              width: '100%', 
+              padding: '16px', 
+              background: saving ? '#ccc' : '#C0182A', 
+              color: '#fff', 
+              border: 'none', 
+              borderRadius: '12px', 
+              fontSize: '18px', 
+              fontWeight: 'bold', 
+              cursor: saving ? 'not-allowed' : 'pointer', 
+              marginBottom: '10px' 
+            }}
+          >
+            {saving ? 'सेभ हुँदैछ...' : `₹${total} भुक्तानी गर्नुहोस्`}
+          </button>
           <p style={{ color: '#888', fontSize: '12px', margin: 0 }}>💡 भुक्तानी पछि हामी ३० मिनेटमा फोन गर्नेछौं</p>
         </div>
       </div>

@@ -19,10 +19,13 @@ export default function AdminPage() {
   // New city form
   const [newCity, setNewCity] = useState({ name: '', country: 'india' })
   
+  // CHANGED: Fetch bookings from Upstash API instead of localStorage
   useEffect(() => {
     if (!authenticated) return
-    const data = JSON.parse(localStorage.getItem('bookings') || '[]')
-    setBookings(data.reverse())
+    
+    fetch('/api/bookings')
+      .then(r => r.json())
+      .then(data => setBookings(data || []))
     
     fetch('/api/buses').then(r => r.json()).then(setBuses)
     fetch('/api/cities').then(r => r.json()).then(d => {
@@ -37,11 +40,14 @@ export default function AdminPage() {
     else alert('गलत पासवर्ड!')
   }
   
-  const updateStatus = (bookingId, newStatus) => {
-    const all = JSON.parse(localStorage.getItem('bookings') || '[]')
-    const updated = all.map(b => b.id === bookingId ? { ...b, status: newStatus } : b)
-    localStorage.setItem('bookings', JSON.stringify(updated))
-    setBookings(updated.reverse())
+  // CHANGED: Update status via API instead of localStorage
+  const updateStatus = async (bookingId, newStatus) => {
+    await fetch('/api/bookings', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: bookingId, status: newStatus })
+    })
+    setRefreshKey(k => k + 1)
   }
   
   const addBus = async (e) => {
