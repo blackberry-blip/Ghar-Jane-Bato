@@ -1,8 +1,19 @@
 import { kv } from '@vercel/kv'
 import { NextResponse } from 'next/server'
 
-export async function GET() {
+export async function GET(request) {
+  const { searchParams } = new URL(request.url)
+  const id = searchParams.get('id')
+  
   const bookings = await kv.get('bookings') || []
+  
+  // If ID provided, return single booking
+  if (id) {
+    const booking = bookings.find(b => b.id === id)
+    return NextResponse.json(booking || { error: 'Not found' })
+  }
+  
+  // Otherwise return all
   return NextResponse.json(bookings)
 }
 
@@ -27,7 +38,7 @@ export async function POST(request) {
     createdAt: body.createdAt || new Date().toISOString(),
   }
   
-  bookings.unshift(newBooking) // newest first
+  bookings.unshift(newBooking)
   await kv.set('bookings', bookings)
   return NextResponse.json({ success: true, booking: newBooking })
 }

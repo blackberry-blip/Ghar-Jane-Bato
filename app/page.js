@@ -2,6 +2,42 @@
 
 import { useState, useEffect, useRef } from 'react'
 
+// ===== SKELETON LOADER COMPONENT =====
+function SkeletonCard() {
+  return (
+    <div style={{ background: '#fff', borderRadius: '16px', padding: '16px', marginBottom: '12px', border: '1px solid #e8e4db' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+        <div style={{ width: '60%', height: '18px', background: '#e0e0e0', borderRadius: '4px', animation: 'pulse 1.5s infinite' }}></div>
+        <div style={{ width: '20%', height: '18px', background: '#e0e0e0', borderRadius: '4px', animation: 'pulse 1.5s infinite' }}></div>
+      </div>
+      <div style={{ width: '40%', height: '14px', background: '#e0e0e0', borderRadius: '4px', marginBottom: '8px', animation: 'pulse 1.5s infinite' }}></div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ width: '30%', height: '24px', background: '#e0e0e0', borderRadius: '4px', animation: 'pulse 1.5s infinite' }}></div>
+        <div style={{ width: '25%', height: '36px', background: '#e0e0e0', borderRadius: '8px', animation: 'pulse 1.5s infinite' }}></div>
+      </div>
+    </div>
+  )
+}
+
+function SkeletonSearch() {
+  return (
+    <div style={{ background: '#fff', borderRadius: '20px', padding: '24px', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
+      <div style={{ width: '50%', height: '20px', background: '#e0e0e0', borderRadius: '4px', margin: '0 auto 20px', animation: 'pulse 1.5s infinite' }}></div>
+      <div style={{ height: '56px', background: '#e0e0e0', borderRadius: '12px', marginBottom: '16px', animation: 'pulse 1.5s infinite' }}></div>
+      <div style={{ height: '56px', background: '#e0e0e0', borderRadius: '12px', marginBottom: '16px', animation: 'pulse 1.5s infinite' }}></div>
+      <div style={{ height: '52px', background: '#e0e0e0', borderRadius: '12px', animation: 'pulse 1.5s infinite' }}></div>
+    </div>
+  )
+}
+
+// Add CSS animation
+const pulseStyle = `
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+`
+
 function SearchableDropdown({ label, placeholder, options, value, onChange, icon }) {
   const [open, setOpen] = useState(false)
   const [filter, setFilter] = useState('')
@@ -40,11 +76,21 @@ function SearchableDropdown({ label, placeholder, options, value, onChange, icon
 function WelcomeScreen({ onStart }) {
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(135deg, #0D1B3E 0%, #1a2d5c 100%)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '24px', textAlign: 'center', zIndex: 1000 }}>
-      <div style={{ fontSize: '72px', marginBottom: '20px' }}>🏔️</div>
+      <div style={{ fontSize: '72px', marginBottom: '20px', animation: 'bounce 2s infinite' }}>🏔️</div>
       <h1 style={{ color: '#C9A84C', fontSize: '32px', margin: '0 0 12px 0', fontWeight: 'bold' }}>घर जाने बाटो</h1>
       <p style={{ color: '#fff', fontSize: '18px', lineHeight: '1.7', maxWidth: '320px', margin: '0 0 32px 0' }}>"तपाईंको मेहनतले भारतलाई बनाउनुभयो,<br/>अब हामी तपाईंलाई घर पुर्‍याउँछौं"</p>
       <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '14px', lineHeight: '1.6', maxWidth: '300px', margin: '0 0 40px 0' }}>दशैं होस् या तिहार, छठ होस् या जुनसुकै दिन — आमाको माया, बुबाको आशीर्वाद, परिवारको बाटो हामी सजिलो बनाउँछौं</p>
-      <button onClick={onStart} style={{ padding: '16px 48px', background: '#C0182A', color: '#fff', border: 'none', borderRadius: '50px', fontSize: '18px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 4px 16px rgba(192,24,42,0.4)' }}>घर जाने बाटो खोज्नुहोस् →</button>
+      <button onClick={onStart} style={{ padding: '16px 48px', background: '#C0182A', color: '#fff', border: 'none', borderRadius: '50px', fontSize: '18px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 4px 16px rgba(192,24,42,0.4)', animation: 'pulse 2s infinite' }}>घर जाने बाटो खोज्नुहोस् →</button>
+      <style>{`
+        @keyframes bounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
+        }
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.02); opacity: 0.9; }
+        }
+      `}</style>
     </div>
   )
 }
@@ -81,7 +127,6 @@ function BookingModal({ bus, from, to, onClose, onConfirm }) {
     setShowPay(true)
   }
 
-  // CHANGED: Now saves to Upstash API instead of localStorage
   const handlePay = async () => {
     setSaving(true)
     const booking = {
@@ -126,24 +171,7 @@ function BookingModal({ bus, from, to, onClose, onConfirm }) {
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}><span style={{ color: '#666' }}>सीट</span><span style={{ fontWeight: '600' }}>{form.seats}</span></div>
             <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #ddd', paddingTop: '10px', marginTop: '10px' }}><span style={{ fontWeight: 'bold', color: '#0D1B3E' }}>कुल रकम</span><span style={{ fontWeight: 'bold', color: '#C0182A', fontSize: '20px' }}>₹{total}</span></div>
           </div>
-          <button 
-            onClick={handlePay} 
-            disabled={saving}
-            style={{ 
-              width: '100%', 
-              padding: '16px', 
-              background: saving ? '#ccc' : '#C0182A', 
-              color: '#fff', 
-              border: 'none', 
-              borderRadius: '12px', 
-              fontSize: '18px', 
-              fontWeight: 'bold', 
-              cursor: saving ? 'not-allowed' : 'pointer', 
-              marginBottom: '10px' 
-            }}
-          >
-            {saving ? 'सेभ हुँदैछ...' : `₹${total} भुक्तानी गर्नुहोस्`}
-          </button>
+          <button onClick={handlePay} disabled={saving} style={{ width: '100%', padding: '16px', background: saving ? '#ccc' : '#C0182A', color: '#fff', border: 'none', borderRadius: '12px', fontSize: '18px', fontWeight: 'bold', cursor: saving ? 'not-allowed' : 'pointer', marginBottom: '10px' }}>{saving ? 'सेभ हुँदैछ...' : `₹${total} भुक्तानी गर्नुहोस्`}</button>
           <p style={{ color: '#888', fontSize: '12px', margin: 0 }}>💡 भुक्तानी पछि हामी ३० मिनेटमा फोन गर्नेछौं</p>
         </div>
       </div>
@@ -196,16 +224,43 @@ function ConfirmationScreen({ booking, onReset }) {
       <div style={{ fontSize: '64px', marginBottom: '20px' }}>✅</div>
       <h2 style={{ color: '#0D1B3E', margin: '0 0 8px 0' }}>बुकिङ सफल भयो!</h2>
       <p style={{ color: '#666', lineHeight: '1.7', marginBottom: '24px' }}>{booking.name} जी, तपाईंको बुकिङ सुरक्षित छ।<br/>हामी <strong>३० मिनेटभित्र</strong> फोन गरेर सीट पक्का गर्ने जानकारी दिनेछौं।</p>
+      
+      {/* Booking ID Box */}
+      <div style={{ background: '#fff8e1', borderRadius: '12px', padding: '16px', marginBottom: '20px', border: '2px dashed #C9A84C' }}>
+        <p style={{ margin: '0 0 4px 0', color: '#666', fontSize: '13px' }}>तपाईंको बुकिङ ID</p>
+        <p style={{ margin: 0, color: '#C0182A', fontSize: '22px', fontWeight: 'bold', letterSpacing: '1px' }}>{booking.id}</p>
+        <p style={{ margin: '8px 0 0 0', color: '#888', fontSize: '12px' }}>यो ID सुरक्षित राख्नुहोस्</p>
+      </div>
+
       <div style={{ background: '#fff', borderRadius: '16px', padding: '20px', marginBottom: '24px', textAlign: 'left', border: '1px solid #e0dcd3' }}>
-        <p style={{ margin: '0 0 8px 0' }}><strong>बुकिङ ID:</strong> <span style={{ color: '#C0182A' }}>{booking.id}</span></p>
         <p style={{ margin: '0 0 8px 0' }}><strong>मार्ग:</strong> {booking.from} → {booking.to}</p>
         <p style={{ margin: '0 0 8px 0' }}><strong>अपरेटर:</strong> {booking.busOperator}</p>
         <p style={{ margin: '0 0 8px 0' }}><strong>सीट:</strong> {booking.seats}</p>
         <p style={{ margin: '0 0 8px 0' }}><strong>रकम:</strong> ₹{booking.totalAmount}</p>
         <p style={{ margin: 0 }}><strong>मिति:</strong> {booking.date}</p>
       </div>
+
+      {/* Ticket Link */}
+      <a href={`/ticket`} style={{
+        display: 'block',
+        width: '100%',
+        padding: '16px',
+        background: '#0D1B3E',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '12px',
+        fontSize: '16px',
+        fontWeight: 'bold',
+        textDecoration: 'none',
+        marginBottom: '12px',
+        textAlign: 'center',
+        boxSizing: 'border-box'
+      }}>
+        🎫 मेरो टिकट हेर्नुहोस्
+      </a>
+
       <p style={{ color: '#C0182A', fontWeight: 'bold', fontSize: '16px', marginBottom: '24px' }}>📞 कृपया फोनको पर्खाइ गर्नुहोस्!</p>
-      <button onClick={onReset} style={{ padding: '14px 32px', background: '#0D1B3E', color: '#fff', border: 'none', borderRadius: '10px', fontSize: '16px', cursor: 'pointer' }}>← अर्को बुकिङ</button>
+      <button onClick={onReset} style={{ padding: '14px 32px', background: '#f5f5f5', color: '#666', border: '1px solid #ddd', borderRadius: '10px', fontSize: '16px', cursor: 'pointer' }}>← अर्को बुकिङ</button>
     </div>
   )
 }
@@ -245,13 +300,12 @@ export default function Home() {
   const handleConfirm = (booking) => { setConfirmedBooking(booking); setSelectedBus(null); setStep('confirmation') }
   const handleReset = () => { setStep('search'); setFromCity(''); setToCity(''); setFilteredBuses([]); setConfirmedBooking(null) }
 
-  if (loading && !showWelcome) {
-    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}><p>लोड हुँदैछ...</p></div>
-  }
-
   return (
     <div style={{ minHeight: '100vh', background: '#f8f6f1' }}>
+      <style>{pulseStyle}</style>
+      
       {showWelcome && <WelcomeScreen onStart={() => setShowWelcome(false)} />}
+
       {!showWelcome && step === 'search' && (
         <div style={{ maxWidth: '480px', margin: '0 auto', padding: '24px 16px' }}>
           <div style={{ textAlign: 'center', marginBottom: '32px', padding: '20px 0' }}>
@@ -259,13 +313,35 @@ export default function Home() {
             <h1 style={{ color: '#0D1B3E', margin: '0 0 8px 0', fontSize: '26px' }}>घर जाने बाटो</h1>
             <p style={{ color: '#666', margin: 0, fontSize: '14px' }}>"आमाको माया, बुबाको आशीर्वाद —<br/>घर फर्कने बाटो, हामी सजिलो बनाउँछौं"</p>
           </div>
-          <div style={{ background: '#fff', borderRadius: '20px', padding: '24px', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', border: '1px solid #e8e4db' }}>
-            <h2 style={{ color: '#0D1B3E', margin: '0 0 20px 0', fontSize: '18px', textAlign: 'center' }}>कहाँबाट कहाँ जाने?</h2>
-            <SearchableDropdown label="कहाँबाट (भारत)" placeholder="शहर छान्नुहोस्" options={indiaCities} value={fromCity} onChange={setFromCity} icon="🇮🇳" />
-            <div style={{ textAlign: 'center', margin: '-8px 0 8px 0' }}><span style={{ fontSize: '24px' }}>⇅</span></div>
-            <SearchableDropdown label="कहाँसम्म (नेपाल)" placeholder="शहर छान्नुहोस्" options={nepalCities} value={toCity} onChange={setToCity} icon="🇳🇵" />
-            <button onClick={handleSearch} style={{ width: '100%', padding: '16px', background: '#C0182A', color: '#fff', border: 'none', borderRadius: '12px', fontSize: '18px', fontWeight: 'bold', cursor: 'pointer', marginTop: '8px' }}>बस खोज्नुहोस् 🔍</button>
+
+          {loading ? <SkeletonSearch /> : (
+            <div style={{ background: '#fff', borderRadius: '20px', padding: '24px', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', border: '1px solid #e8e4db' }}>
+              <h2 style={{ color: '#0D1B3E', margin: '0 0 20px 0', fontSize: '18px', textAlign: 'center' }}>कहाँबाट कहाँ जाने?</h2>
+              <SearchableDropdown label="कहाँबाट (भारत)" placeholder="शहर छान्नुहोस्" options={indiaCities} value={fromCity} onChange={setFromCity} icon="🇮🇳" />
+              <div style={{ textAlign: 'center', margin: '-8px 0 8px 0' }}><span style={{ fontSize: '24px' }}>⇅</span></div>
+              <SearchableDropdown label="कहाँसम्म (नेपाल)" placeholder="शहर छान्नुहोस्" options={nepalCities} value={toCity} onChange={setToCity} icon="🇳🇵" />
+              <button onClick={handleSearch} style={{ width: '100%', padding: '16px', background: '#C0182A', color: '#fff', border: 'none', borderRadius: '12px', fontSize: '18px', fontWeight: 'bold', cursor: 'pointer', marginTop: '8px' }}>बस खोज्नुहोस् 🔍</button>
+            </div>
+          )}
+
+          {/* My Ticket Button */}
+          <div style={{ marginTop: '20px' }}>
+            <a href="/ticket" style={{
+              display: 'block',
+              background: '#fff',
+              borderRadius: '16px',
+              padding: '18px',
+              textAlign: 'center',
+              textDecoration: 'none',
+              border: '2px solid #0D1B3E',
+              color: '#0D1B3E',
+              fontWeight: 'bold',
+              fontSize: '16px'
+            }}>
+              🎫 मेरो टिकट हेर्नुहोस्
+            </a>
           </div>
+
           <div style={{ textAlign: 'center', marginTop: '32px', padding: '0 20px' }}>
             <p style={{ color: '#888', fontSize: '13px', lineHeight: '1.6' }}>✅ विश्वसनीय सेवा • 🏔️ नेपाली मालिक • 📞 २४/७ सहयोग</p>
           </div>
@@ -274,6 +350,7 @@ export default function Home() {
           </div>
         </div>
       )}
+
       {!showWelcome && step === 'results' && (
         <div style={{ maxWidth: '480px', margin: '0 auto', padding: '16px' }}>
           <button onClick={() => setStep('search')} style={{ background: 'none', border: 'none', color: '#666', fontSize: '16px', cursor: 'pointer', marginBottom: '16px' }}>← फिर्ता</button>
@@ -291,6 +368,7 @@ export default function Home() {
           {selectedBus && <BookingModal bus={selectedBus} from={fromCity} to={toCity} onClose={() => setSelectedBus(null)} onConfirm={handleConfirm} />}
         </div>
       )}
+
       {!showWelcome && step === 'confirmation' && confirmedBooking && <ConfirmationScreen booking={confirmedBooking} onReset={handleReset} />}
     </div>
   )
